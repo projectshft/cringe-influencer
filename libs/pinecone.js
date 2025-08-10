@@ -45,3 +45,19 @@ export async function queryVectors(indexName, vector, topK = 10, includeMetadata
     throw error;
   }
 }
+
+export async function rerank(query, documents, topK = 5) {
+  try {
+    const rerankedResponse = await pc.rerank({
+      model: 'pinecone-rerank-v0',
+      query,
+      documents: documents.map(doc => ({ id: doc.id, text: doc.text })),
+      topK
+    });
+    
+    return rerankedResponse.data;
+  } catch (error) {
+    console.error('Error reranking with Pinecone:', error);
+    throw error;
+  }
+}

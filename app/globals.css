@@ -1,0 +1,190 @@
+@import 'tailwindcss';
+
+/* Craigslist-style global styles for backend devs */
+@layer base {
+	* {
+		@apply font-mono;
+	}
+
+	body {
+		@apply bg-white text-black text-sm leading-tight;
+		margin: 0;
+		padding: 8px;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		@apply font-bold;
+		margin: 4px 0;
+	}
+
+	h1 {
+		@apply text-lg;
+	}
+	h2 {
+		@apply text-base;
+	}
+	h3 {
+		@apply text-sm;
+	}
+
+	p {
+		margin: 4px 0;
+	}
+
+	a {
+		@apply text-craigslist-blue underline;
+	}
+
+	a:visited {
+		@apply text-craigslist-purple;
+	}
+
+	a:hover {
+		@apply no-underline;
+	}
+}
+
+@layer components {
+	/* Classic form styling */
+	.form-input {
+		@apply border border-gray-400 px-1 py-0 text-sm;
+		font-family: inherit;
+	}
+
+	.form-input:focus {
+		@apply outline-none border-black;
+	}
+
+	/* Classic button styling */
+	.btn {
+		@apply bg-gray-200 border border-gray-400 px-2 py-1 text-sm cursor-pointer;
+		font-family: inherit;
+	}
+
+	.btn:hover {
+		@apply bg-gray-300;
+	}
+
+	.btn:active {
+		@apply bg-gray-400;
+	}
+
+	/* Classic table styling */
+	.table {
+		@apply border-collapse;
+		border: 1px solid #000;
+	}
+
+	.table td,
+	.table th {
+		@apply border border-black px-1 py-0 text-left;
+	}
+
+	.table th {
+		@apply bg-gray-100 font-bold;
+	}
+
+	/* Classic list styling */
+	.list {
+		@apply list-disc ml-4;
+	}
+
+	.list-item {
+		margin: 2px 0;
+	}
+
+	/* Classic container */
+	.container {
+		max-width: 800px;
+		margin: 0;
+		padding: 8px;
+	}
+
+	/* Classic separator */
+	.separator {
+		@apply border-t border-black my-2;
+	}
+
+	/* Classic text area */
+	.textarea {
+		@apply border border-gray-400 p-1 text-sm;
+		font-family: inherit;
+		resize: vertical;
+	}
+
+	.textarea:focus {
+		@apply outline-none border-black;
+	}
+
+	/* Classic select */
+	.select {
+		@apply border border-gray-400 px-1 py-0 text-sm bg-white;
+		font-family: inherit;
+	}
+
+	/* Classic checkbox/radio */
+	.checkbox,
+	.radio {
+		margin-right: 4px;
+	}
+
+	/* Classic pre/code styling */
+	pre {
+		@apply bg-gray-100 border border-gray-400 p-2 text-xs overflow-x-auto;
+		font-family: inherit;
+	}
+
+	code {
+		@apply bg-gray-100 px-1;
+		font-family: inherit;
+	}
+
+	/* Classic alert/notice box */
+	.notice {
+		@apply border border-black bg-yellow-100 p-2 mb-2;
+	}
+
+	.error {
+		@apply border border-red-600 bg-red-100 p-2 mb-2 text-red-800;
+	}
+
+	.success {
+		@apply border border-green-600 bg-green-100 p-2 mb-2 text-green-800;
+	}
+}
+
+/* Classic responsive behavior (minimal) */
+@media (max-width: 640px) {
+	body {
+		padding: 4px;
+	}
+
+	.container {
+		padding: 4px;
+	}
+}
+
+/* Remove modern styling from form elements */
+input,
+textarea,
+select,
+button {
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	border-radius: 0;
+}
+
+/* Classic focus styles */
+input:focus,
+textarea:focus,
+select:focus,
+button:focus {
+	outline: 1px dotted #000;
+	outline-offset: 2px;
+}
