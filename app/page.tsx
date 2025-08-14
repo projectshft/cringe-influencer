@@ -87,16 +87,21 @@ export default function Home() {
 
 			<h2>Search Interface:</h2>
 			<form onSubmit={handleSearch} className='mb-4'>
-				<input
-					type='text'
-					value={query}
-					onChange={(e) => setQuery(e.target.value)}
-					placeholder='Search Brian posts... (e.g., "AI startup advice")'
-					className='form-input w-64 mr-2'
-				/>
-				<button type='submit' className='btn' disabled={loading}>
-					{loading ? 'SEARCHING...' : 'SEARCH'}
-				</button>
+				<div className='mb-2'>
+					<textarea
+						value={query}
+						onChange={(e) => setQuery(e.target.value)}
+						placeholder='Search Brian posts... (e.g., "AI startup advice")'
+						className='form-input w-full p-2'
+						rows={3}
+						style={{ resize: 'vertical', minHeight: '80px' }}
+					></textarea>
+				</div>
+				<div>
+					<button type='submit' className='btn' disabled={loading}>
+						{loading ? 'SEARCHING...' : 'SEARCH'}
+					</button>
+				</div>
 			</form>
 
 			{loading && (
