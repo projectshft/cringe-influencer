@@ -4,20 +4,20 @@ import { useState } from 'react';
 import DocumentResults from './components/DocumentResults';
 
 interface Document {
-  id: string;
-  score: number;
-  text: string;
-  type?: string;
-  firstName?: string;
-  lastName?: string;
-  numImpressions?: number;
-  numViews?: number;
-  numReactions?: number;
-  numComments?: number;
-  numShares?: number;
-  createdAt?: string;
-  link?: string;
-  hashtags?: string;
+	id: string;
+	score: number;
+	text: string;
+	type?: string;
+	firstName?: string;
+	lastName?: string;
+	numImpressions?: number;
+	numViews?: number;
+	numReactions?: number;
+	numComments?: number;
+	numShares?: number;
+	createdAt?: string;
+	link?: string;
+	hashtags?: string;
 }
 
 export default function Home() {
@@ -65,7 +65,10 @@ export default function Home() {
 			<h1>CRINGE INFLUENCER RAG</h1>
 			<div className='separator'></div>
 
-			<p>No fancy styling, just pure functionality. Compare basic vector search vs re-ranked results!</p>
+			<p>
+				No fancy styling, just pure functionality. Compare basic vector
+				search vs re-ranked results!
+			</p>
 
 			<h2>Features:</h2>
 			<ul className='list'>
@@ -105,18 +108,18 @@ export default function Home() {
 			<div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
 				{basicResults.length > 0 && (
 					<div style={{ flex: '1', minWidth: '400px' }}>
-						<DocumentResults 
-							documents={basicResults} 
-							title="BASIC VECTOR SEARCH" 
+						<DocumentResults
+							documents={basicResults}
+							title='BASIC VECTOR SEARCH'
 						/>
 					</div>
 				)}
 
 				{rerankedResults.length > 0 && (
 					<div style={{ flex: '1', minWidth: '400px' }}>
-						<DocumentResults 
-							documents={rerankedResults} 
-							title="RE-RANKED RESULTS" 
+						<DocumentResults
+							documents={rerankedResults}
+							title='RE-RANKED RESULTS'
 							reranked={true}
 						/>
 					</div>
@@ -127,8 +130,10 @@ export default function Home() {
 
 			<h3>How it works:</h3>
 			<p style={{ fontSize: '0.9em', color: '#666', lineHeight: '1.5' }}>
-				<strong>Basic Search:</strong> Creates embedding for your query, searches Pinecone for similar vectors, returns top 5 by cosine similarity.<br/>
-				<strong>Re-ranked Search:</strong> Gets top 10 from Pinecone, then uses GPT-3.5 to re-rank based on semantic relevance to your query.
+				<strong>Basic Search:</strong> Creates embedding for your query,
+				searches Pinecone for similar vectors, returns top 5 by cosine
+				similarity.
+				<br />
 			</p>
 		</div>
 	);

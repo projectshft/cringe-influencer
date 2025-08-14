@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createEmbedding } from '../../../libs/openai.js';
-import { queryVectors, rerank } from '../../../libs/pinecone.js';
-
+import { createEmbedding } from '../../../libs/openai';
+import { queryVectors, rerank } from '../../../libs/pinecone';
 
 export async function POST(request: NextRequest) {
 	try {
@@ -34,12 +33,12 @@ export async function POST(request: NextRequest) {
 		}));
 
 		const rerankedResults = await rerank(query, documents, 5);
-		
-		const rerankedDocuments = rerankedResults.map((result: any) => {
-			const originalDoc = documents.find(doc => doc.id === result.document.id);
+
+		const rerankedDocuments = rerankedResults.data.map((result: any) => {
+			const originalDoc = documents[result.index];
 			return {
 				...originalDoc,
-				rerankScore: result.score
+				rerankScore: result.score,
 			};
 		});
 
