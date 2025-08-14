@@ -9,7 +9,8 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"embed": "node scripts/embed.js"
+		"embed": "node scripts/embed.js",
+		"upload": "node scripts/upload-to-pinecone.js"
 	},
 	"dependencies": {
 		"@pinecone-database/pinecone": "6.1.2",
@@ -37,6 +38,7 @@
 		"tailwindcss": "4.1.11",
 		"@tailwindcss/postcss": "4.1.11",
 		"postcss": "^8.4.0",
-		"autoprefixer": "^10.4.0"
+		"autoprefixer": "^10.4.0",
+		"ts-node": "^10.9.2"
 	}
 }

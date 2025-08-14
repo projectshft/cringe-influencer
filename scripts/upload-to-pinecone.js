@@ -13,19 +13,27 @@ const pc = new Pinecone({
 async function createIndexIfNeeded(indexName, dimension) {
 	try {
 		const indexList = await pc.listIndexes();
-		const existingIndex = indexList.indexes?.find(idx => idx.name === indexName);
-		
+		const existingIndex = indexList.indexes?.find(
+			(idx) => idx.name === indexName
+		);
+
 		if (existingIndex) {
 			console.log(`Index '${indexName}' already exists`);
 			if (existingIndex.dimension !== dimension) {
-				console.warn(`⚠️  Index dimension mismatch: expected ${dimension}, got ${existingIndex.dimension}`);
-				console.log(`You may need to delete the existing index or use a different name`);
+				console.warn(
+					`⚠️  Index dimension mismatch: expected ${dimension}, got ${existingIndex.dimension}`
+				);
+				console.log(
+					`You may need to delete the existing index or use a different name`
+				);
 				return false;
 			}
 			return true;
 		}
-		
-		console.log(`Creating index '${indexName}' with dimension ${dimension}...`);
+
+		console.log(
+			`Creating index '${indexName}' with dimension ${dimension}...`
+		);
 		await pc.createIndex({
 			name: indexName,
 			dimension: dimension,
@@ -33,11 +41,11 @@ async function createIndexIfNeeded(indexName, dimension) {
 			spec: {
 				serverless: {
 					cloud: 'aws',
-					region: 'us-east-1'
-				}
-			}
+					region: 'us-east-1',
+				},
+			},
 		});
-		
+
 		console.log(`✅ Index '${indexName}' created successfully`);
 		return true;
 	} catch (error) {
@@ -48,8 +56,12 @@ async function createIndexIfNeeded(indexName, dimension) {
 
 async function uploadVectorsToPinecone() {
 	try {
-		const vectorsPath = path.join(process.cwd(), 'output', 'brian_posts_vectors.json');
-		
+		const vectorsPath = path.join(
+			process.cwd(),
+			'output',
+			'brian_posts_vectors.json'
+		);
+
 		if (!fs.existsSync(vectorsPath)) {
 			throw new Error(`Vectors file not found at: ${vectorsPath}`);
 		}
@@ -63,11 +75,13 @@ async function uploadVectorsToPinecone() {
 		}
 
 		const dimension = vectors[0].values.length;
-		console.log(`Found ${vectors.length} vectors with dimension ${dimension}`);
-		
+		console.log(
+			`Found ${vectors.length} vectors with dimension ${dimension}`
+		);
+
 		const indexName = 'brian-clone-512';
 		const indexReady = await createIndexIfNeeded(indexName, dimension);
-		
+
 		if (!indexReady) {
 			throw new Error('Index is not ready for upload');
 		}
@@ -77,7 +91,9 @@ async function uploadVectorsToPinecone() {
 		await upsertVectors(indexName, vectors);
 
 		console.log('✅ Successfully uploaded all vectors to Pinecone!');
-		console.log(`📊 Uploaded ${vectors.length} vectors to index '${indexName}'`);
+		console.log(
+			`📊 Uploaded ${vectors.length} vectors to index '${indexName}'`
+		);
 	} catch (error) {
 		console.error('❌ Error uploading vectors:', error);
 		process.exit(1);
