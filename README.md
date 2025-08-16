@@ -59,6 +59,20 @@ console.log(prompt);
 -   `output/` - Generated vector JSON files
 -   `index.js` - RAG class for querying and prompt generation
 
+## Learning Resources
+
+### Linear Algebra for ML/LLMs
+
+3Blue1Brown (Grant Sanderson) offers excellent visual explanations of linear algebra concepts essential for understanding ML and LLMs:
+
+-   [Essence of Linear Algebra](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab) - Visual introduction to vectors, matrices, and transformations
+-   [Neural Networks](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi) - How neural networks work with visual explanations
+-   [Visualizing High-Dimensional Space](https://www.youtube.com/watch?v=zwAD6dRSVyI) - Understanding high-dimensional vector spaces (relevant for embeddings)
+
+### Large Language Models
+
+-   [Transformers, explained](https://www.youtube.com/watch?v=SZorAJ4I-sA) - 3Blue1Brown's explanation of the transformer architecture
+
 ## Future Improvements
 
 This implementation provides a foundational RAG system but several areas could be enhanced:
