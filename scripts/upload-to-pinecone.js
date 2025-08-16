@@ -79,7 +79,7 @@ async function uploadVectorsToPinecone() {
 			`Found ${vectors.length} vectors with dimension ${dimension}`
 		);
 
-		const indexName = 'brian-clone-512';
+		const indexName = process.env.PINECONE_INDEX_NAME;
 		const indexReady = await createIndexIfNeeded(indexName, dimension);
 
 		if (!indexReady) {
