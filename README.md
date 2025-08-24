@@ -2,7 +2,7 @@
 
 Backend app that processes Brian's LinkedIn posts, creates embeddings, and generates vectors for Pinecone upload. Enables RAG-powered content generation in Brian's authentic voice.
 
-[Live Walkthrough Video](https://us06web.zoom.us/rec/play/P8c1JiAqByLp5U8roOhKQpk5-Xq6AGj7P--wJ7qOHjxlPBin96C8N4GbCc3x4qVHQAdvNWyRtUvoNkbq.rsd5noiK7rAJYN9b?eagerLoadZvaPages=sidemenu.billing.plan_management&accessLevel=meeting&canPlayFromShare=true&from=my_recording&startTime=1755212314000&pwd=DGB_jS2DWdjFsggvjwAAIAAAAH_aDcb-ckukHetHvtQIW8XAYZy56S16kP82sij9mY-GjYSbeIWZcJKDshSxu3_e5DAwMDAwNA&componentName=rec-play&originRequestUrl=https%3A%2F%2Fus06web.zoom.us%2Frec%2Fshare%2FCbhnmKA8eIH7nJXNGf8qDHju4gOAGmyFZhF3QeEG2AvGP6uhhiQLn715JEIXc6Xi.TGaJJSAxjwaZzvjN%3FstartTime%3D1755212314000%26pwd%3DDGB_jS2DWdjFsggvjwAAIAAAAH_aDcb-ckukHetHvtQIW8XAYZy56S16kP82sij9mY-GjYSbeIWZcJKDshSxu3_e5DAwMDAwNA)
+[Live Walkthrough Video](https://share.descript.com/view/JNWta1T8TKX)
 
 ## Setup
 
