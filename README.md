@@ -1,112 +1,104 @@
 # Cringe Influencer RAG
 
-Backend app that processes Brian's LinkedIn posts, creates embeddings, and generates vectors for Pinecone upload. Enables RAG-powered content generation in Brian's authentic voice.
+A Next.js application that uses RAG (Retrieval Augmented Generation) to search through LinkedIn posts, create embeddings, and generate content in an authentic voice.
 
 [Live Walkthrough Video](https://share.descript.com/view/JNWta1T8TKX)
 
-## Setup
+## 🚀 Quick Start
 
-1. Install dependencies:
+### Prerequisites
+
+-   Node.js (v22+)
+-   Yarn package manager
+-   OpenAI API key
+-   Pinecone account (free tier available)
+
+### Step 1: Clone and Install
 
 ```bash
+git clone https://github.com/yourusername/cringe-influencer-rag.git
+cd cringe-influencer-rag
 yarn install
 ```
 
-2. Create a Pinecone vector database:
+### Step 2: Set Up Environment Variables
 
-    - Sign up at [Pinecone](https://www.pinecone.io/)
-    - Create a new index with:
-        - **Dimensions**: 512 (OpenAI text-embedding-3-small)
-        - **Metric**: cosine
-        - **Cloud**: Any region
-
-3. Copy `.env.example` to `.env` and add your keys:
+Create a `.env` file in the project root:
 
 ```bash
-cp .env.example .env
+# Required for vector database
+PINECONE_API_KEY=your_pinecone_api_key
+PINECONE_INDEX_NAME=your_index_name
+
+# Required for OpenAI embeddings and search
+OPENAI_API_KEY=your_openai_api_key
 ```
 
-Add your Pinecone API key and index name. You'll need an OpenAI API key for querying (not for the pre-generated vectors).
+### Step 3: Set Up Pinecone (Free Tier)
 
-4. Upload pre-generated vectors to avoid using your OpenAI credits:
+1. Sign up at [Pinecone](https://www.pinecone.io/) (free tier includes 1 index)
+2. Create a new index with these settings:
+    - **Name**: Choose a name (use this as PINECONE_INDEX_NAME in .env)
+    - **Dimensions**: 512 (for OpenAI text-embedding-3-small)
+    - **Metric**: cosine
+    - **Cloud**: Any region (e.g., aws/us-east-1)
+3. Copy your API key from the Pinecone console to your .env file
+
+### Step 4: Get OpenAI API Key
+
+1. Sign up at [OpenAI Platform](https://platform.openai.com/)
+2. Navigate to [API Keys](https://platform.openai.com/api-keys)
+3. Create a new API key and copy it to your .env file
+4. Add $5 credit to your account (OpenAI offers pay-as-you-go pricing)
+    - Go to [Billing](https://platform.openai.com/account/billing/overview)
+    - Click "Add to credit balance"
+    - Add $5 (this is enough for thousands of embeddings and queries)
+
+### Step 5: Upload Vectors to Pinecone
 
 ```bash
-node scripts/upload-to-pinecone.js
+yarn upload
 ```
 
-This uploads the already-generated `output/brian_posts_vectors.json` to your Pinecone index.
+This uploads pre-generated vectors from `output/brian_posts_vectors.json` to your Pinecone index. Please use the correct index name.
 
-## Usage
+### Step 6: Run the Application
 
-```javascript
-// pseudo-code
-
-import { CringeInfluencerRAG } from './index.js';
-
-// Initialize with your Pinecone index name
-const rag = new CringeInfluencerRAG('your-pinecone-index-name');
-
-// Query for relevant content (uses OpenAI for query embedding)
-const context = await rag.queryInBrianVoice('AI tools and productivity');
-
-// Generate a prompt in Brian's voice
-const prompt = rag.generatePromptInBrianVoice('AI in 2024', context);
-console.log(prompt);
+```bash
+yarn dev
 ```
 
-## Structure
+Visit [http://localhost:3000](http://localhost:3000) to use the application.
 
--   `libs/` - OpenAI and Pinecone utilities
--   `scripts/embed.js` - Main embedding script
--   `output/` - Generated vector JSON files
--   `index.js` - RAG class for querying and prompt generation
+## 🔍 Using the Application
 
-## Learning Resources
+1. Enter a search query in the text area (e.g., "AI startup advice")
+2. Click the SEARCH button
+3. View results from both basic vector search and re-ranked results
+4. Compare how the re-ranking improves search relevance
 
-### Linear Algebra for ML/LLMs
+## 📁 Project Structure
 
-3Blue1Brown (Grant Sanderson) offers excellent visual explanations of linear algebra concepts essential for understanding ML and LLMs:
+-   `app/` - Next.js application files
+    -   `api/` - API routes for search and re-ranking
+    -   `components/` - React components
+-   `data/` - Source data files
+-   `libs/` - Utility libraries for OpenAI and Pinecone
+-   `scripts/` - Scripts for embedding and uploading vectors
+-   `output/` - Generated vector files
 
--   [Essence of Linear Algebra](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab) - Visual introduction to vectors, matrices, and transformations
--   [Neural Networks](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi) - How neural networks work with visual explanations
--   [Visualizing High-Dimensional Space](https://www.youtube.com/watch?v=zwAD6dRSVyI) - Understanding high-dimensional vector spaces (relevant for embeddings)
+## 🛠️ Available Scripts
 
-### Large Language Models
+-   `yarn dev` - Start development server
+-   `yarn build` - Build for production
+-   `yarn start` - Start production server
+-   `yarn embed` - Generate embeddings from source data
+-   `yarn upload` - Upload vectors to Pinecone
 
--   [Transformers, explained](https://www.youtube.com/watch?v=SZorAJ4I-sA) - 3Blue1Brown's explanation of the transformer architecture
+## 📚 Learning Resources
 
-## Future Improvements
+For those interested in the technology behind this application:
 
-This implementation provides a foundational RAG system but several areas could be enhanced:
-
-### Chunking Strategies
-
--   **Document Pipeline**: Implement automated systems to continuously ingest and chunk new content
--   **Dynamic Chunking**: Explore semantic chunking vs fixed-size chunking for better retrieval accuracy
--   **Chunk Overlap**: Add configurable overlap between chunks to maintain context continuity
-
-### Query Enhancement
-
--   **Query Preprocessing**: Extract key concepts and entities from user queries before vector search
--   **Query Expansion**: Use synonyms and related terms to improve retrieval coverage
--   **Intent Recognition**: Classify query types to apply different retrieval strategies
-
-### Embedding Optimization
-
--   **Embedding Models**: Experiment with different embedding dimensions beyond the current 512
--   **Fine-tuning**: Train domain-specific embeddings on Brian's writing style
--   **Multi-model Embeddings**: Compare OpenAI, Sentence Transformers, and other embedding approaches
-
-### Re-ranking and Retrieval
-
--   **Why Re-rank?**: After initial vector similarity search, re-ranking uses different signals (cross-attention, semantic relevance) to improve result quality
--   **Hybrid Search**: Combine vector similarity with keyword matching for better precision
--   **Result Diversity**: Ensure retrieved chunks cover different aspects of the query
-
-### Vector Management
-
--   **Incremental Updates**: Handle new content without full re-indexing
--   **Version Control**: Track document changes and update corresponding vectors
--   **Data Freshness**: Implement strategies for keeping embeddings current with evolving content
-
-These improvements would transform this proof-of-concept into a production-ready system capable of handling dynamic content and complex queries.
+-   [Essence of Linear Algebra](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab) - Visual introduction to vectors
+-   [Neural Networks](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi) - How neural networks work
+-   [Transformers, explained](https://www.youtube.com/watch?v=SZorAJ4I-sA) - Understanding the transformer architecture
