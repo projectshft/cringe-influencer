@@ -102,3 +102,5 @@ For those interested in the technology behind this application:
 -   [Essence of Linear Algebra](https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab) - Visual introduction to vectors
 -   [Neural Networks](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi) - How neural networks work
 -   [Transformers, explained](https://www.youtube.com/watch?v=SZorAJ4I-sA) - Understanding the transformer architecture
+
+## Join Parsity.io if you want to learn the skills to create production-grade full stack AI applications.
