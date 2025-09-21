@@ -2,23 +2,11 @@
 
 import { useState } from 'react';
 import DocumentResults from './components/DocumentResults';
-
-interface Document {
-	id: string;
-	score: number;
-	text: string;
-	type?: string;
-	firstName?: string;
-	lastName?: string;
-	numImpressions?: number;
-	numViews?: number;
-	numReactions?: number;
-	numComments?: number;
-	numShares?: number;
-	createdAt?: string;
-	link?: string;
-	hashtags?: string;
-}
+import {
+	basicSearch,
+	searchWithRerank,
+	type Document,
+} from '../actions/search';
 
 export default function Home() {
 	const [query, setQuery] = useState('');
@@ -35,21 +23,10 @@ export default function Home() {
 		setRerankedResults([]);
 
 		try {
-			// Basic search
-			const basicResponse = await fetch('/api/search', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ query, topK: 5 }),
-			});
-			const basicData = await basicResponse.json();
-
-			// Reranked search
-			const rerankedResponse = await fetch('/api/search-rerank', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ query, topK: 10 }),
-			});
-			const rerankedData = await rerankedResponse.json();
+			const [basicData, rerankedData] = await Promise.all([
+				basicSearch(query, 5),
+				searchWithRerank(query, 10),
+			]);
 
 			setBasicResults(basicData.documents || []);
 			setRerankedResults(rerankedData.documents || []);
