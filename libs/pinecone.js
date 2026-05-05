@@ -31,13 +31,27 @@ export async function upsertVectors(indexName, vectors) {
 			batches.push(vectors.slice(i, i + batchSize));
 		}
 
-		for (const batch of batches) {
-			// The SDK accepts a broader input shape
-			await index.upsert(batch);
+		for (let i = 0; i < batches.length; i++) {
+			const batch = batches[i];
+			if (batch.length === 0) continue;
+
+			let retries = 3;
+			while (retries > 0) {
+				try {
+					await index.upsert({ records: batch });
+					console.log(`Upserted batch ${i + 1}/${batches.length} (${batch.length} vectors)`);
+					break;
+				} catch (err) {
+					retries--;
+					if (retries === 0) throw err;
+					console.log(`Retry batch ${i + 1} (${retries} attempts left)...`);
+					await new Promise((r) => setTimeout(r, 1000));
+				}
+			}
 		}
 
 		console.log(
-			`Successfully upserted ${vectors.length} vectors to ${indexName}`
+			`Successfully upserted ${vectors.length} vectors to ${indexName}`,
 		);
 	} catch (error) {
 		console.error('Error upserting vectors to Pinecone:', error);
@@ -57,7 +71,7 @@ export async function queryVectors(
 	indexName,
 	vector,
 	topK = 10,
-	includeMetadata = true
+	includeMetadata = true,
 ) {
 	try {
 		const index = pc.index(indexName);
@@ -75,38 +89,3 @@ export async function queryVectors(
 	}
 }
 
-/**
- * @typedef {Object} RerankInputDocument
- * @property {string} id
- * @property {string} text
- */
-
-/**
- * Rerank documents using Pinecone's reranking capability
- * @param {string} query - The query to rerank against
- * @param {RerankInputDocument[]} documents - Documents to rerank
- * @param {number} topK - Number of top results to return (default: 5)
- * @returns {Promise<Object>} - Promise resolving to rerank result
- */
-export async function rerank(query, documents, topK = 5) {
-	try {
-		const rerankedResponse = await pc.inference.rerank(
-			'bge-reranker-v2-m3',
-			query,
-			// Ensure the object values are strings per Pinecone typings
-			documents.map((doc) => ({
-				id: String(doc.id),
-				text: String(doc.text),
-			})),
-			{
-				returnDocuments: true,
-				topN: topK,
-			}
-		);
-
-		return rerankedResponse;
-	} catch (error) {
-		console.error('Error reranking with Pinecone:', error);
-		throw error;
-	}
-}

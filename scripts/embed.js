@@ -5,15 +5,15 @@ import path from 'path';
 
 async function main() {
 	try {
-		console.log('Processing CSV file...');
-		const csvPath = '../mini_rag/app/data/brian_posts.csv';
+		console.log('Processing LinkedIn posts CSV...');
+		const csvPath = '../mini-rag/data/brian_posts.csv';
 		const posts = await processCsv(csvPath);
 
 		console.log(`Found ${posts.length} valid posts`);
 
 		console.log('Creating embeddings...');
 		const texts = posts.map((post) => post.text);
-		const embeddings = await createEmbeddings(texts, 512);
+		const embeddings = await createEmbeddings(texts, 1536);
 
 		console.log('Preparing vectors for Pinecone...');
 		const vectors = posts.map((post, index) => ({
@@ -44,11 +44,10 @@ async function main() {
 		console.log('Saving vectors to JSON file...');
 		fs.writeFileSync(outputPath, JSON.stringify(vectors, null, 2));
 
-		console.log(`✅ Successfully created ${vectors.length} vectors`);
-		console.log(`📁 Saved to: ${outputPath}`);
-		console.log('Ready for Pinecone upload!');
+		console.log(`Successfully created ${vectors.length} vectors (1536 dimensions)`);
+		console.log(`Saved to: ${outputPath}`);
 	} catch (error) {
-		console.error('❌ Error:', error);
+		console.error('Error:', error);
 		process.exit(1);
 	}
 }

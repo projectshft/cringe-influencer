@@ -2,38 +2,51 @@
 
 import { useState } from 'react';
 import DocumentResults from './components/DocumentResults';
-import {
-	basicSearch,
-	searchWithRerank,
-	type Document,
-} from '../actions/search';
+import { basicSearch, generatePost, type Document } from '../actions/search';
+
+const SUGGESTED_QUERIES = [
+	'Write a post about why AI is bad for learning to code',
+	'Write a post on how to get a job as a junior developer',
+	'Tell me the weather in france?',
+];
 
 export default function Home() {
 	const [query, setQuery] = useState('');
 	const [loading, setLoading] = useState(false);
-	const [basicResults, setBasicResults] = useState<Document[]>([]);
-	const [rerankedResults, setRerankedResults] = useState<Document[]>([]);
+	const [generating, setGenerating] = useState(false);
+	const [results, setResults] = useState<Document[]>([]);
+	const [generatedPost, setGeneratedPost] = useState('');
 
 	const handleSearch = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!query.trim()) return;
 
 		setLoading(true);
-		setBasicResults([]);
-		setRerankedResults([]);
+		setResults([]);
+		setGeneratedPost('');
 
 		try {
-			const [basicData, rerankedData] = await Promise.all([
-				basicSearch(query, 5),
-				searchWithRerank(query, 10),
-			]);
-
-			setBasicResults(basicData.documents || []);
-			setRerankedResults(rerankedData.documents || []);
+			const data = await basicSearch(query, 5);
+			setResults(data.documents || []);
 		} catch (error) {
 			console.error('Search error:', error);
 		} finally {
 			setLoading(false);
+		}
+	};
+
+	const handleGenerate = async () => {
+		if (results.length === 0) return;
+
+		setGenerating(true);
+		try {
+			const context = results.map((doc) => doc.text);
+			const post = await generatePost(query, context);
+			setGeneratedPost(post);
+		} catch (error) {
+			console.error('Generation error:', error);
+		} finally {
+			setGenerating(false);
 		}
 	};
 
@@ -42,10 +55,7 @@ export default function Home() {
 			<h1>CRINGE INFLUENCER RAG</h1>
 			<div className='separator'></div>
 
-			<p>
-				No fancy styling, just pure functionality. Compare basic vector
-				search vs re-ranked results!
-			</p>
+			<p>Search through LinkedIn posts using vector similarity!</p>
 
 			<h2>Features:</h2>
 			<ul className='list'>
@@ -55,9 +65,8 @@ export default function Home() {
 				<li className='list-item'>
 					Pinecone vector database integration
 				</li>
-				<li className='list-item'>OpenAI embeddings (512d)</li>
-				<li className='list-item'>LLM-based re-ranking comparison</li>
-				<li className='list-item'>Beautiful 1995-era styling</li>
+				<li className='list-item'>OpenAI embeddings (1536d)</li>
+				<li className='list-item'>Gemini-powered post generation</li>
 			</ul>
 
 			<div className='separator'></div>
@@ -68,7 +77,7 @@ export default function Home() {
 					<textarea
 						value={query}
 						onChange={(e) => setQuery(e.target.value)}
-						placeholder='Search Brian posts... (e.g., "AI startup advice")'
+						placeholder='Search posts... (e.g., "AI tools for coding")'
 						className='form-input w-full p-2'
 						rows={3}
 						style={{ resize: 'vertical', minHeight: '80px' }}
@@ -81,41 +90,85 @@ export default function Home() {
 				</div>
 			</form>
 
+			<div style={{ marginBottom: '20px' }}>
+				<p style={{ fontSize: '0.9em', color: '#666', marginBottom: '10px' }}>
+					Try these (cached - no API key needed):
+				</p>
+				<div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+					{SUGGESTED_QUERIES.map((suggestion) => (
+						<button
+							key={suggestion}
+							onClick={() => setQuery(suggestion)}
+							className='btn'
+							style={{
+								fontSize: '0.85em',
+								padding: '8px 12px',
+								backgroundColor: '#6c757d',
+							}}
+						>
+							{suggestion.length > 40
+								? suggestion.slice(0, 40) + '...'
+								: suggestion}
+						</button>
+					))}
+				</div>
+			</div>
+
 			{loading && (
 				<div style={{ padding: '20px', textAlign: 'center' }}>
-					<p>🔍 Searching vectors and re-ranking results...</p>
+					<p>Searching vectors...</p>
 				</div>
 			)}
 
-			<div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap' }}>
-				{basicResults.length > 0 && (
-					<div style={{ flex: '1', minWidth: '400px' }}>
-						<DocumentResults
-							documents={basicResults}
-							title='BASIC VECTOR SEARCH'
-						/>
-					</div>
-				)}
+			{results.length > 0 && (
+				<>
+					<DocumentResults
+						documents={results}
+						title='SEARCH RESULTS'
+					/>
 
-				{rerankedResults.length > 0 && (
-					<div style={{ flex: '1', minWidth: '400px' }}>
-						<DocumentResults
-							documents={rerankedResults}
-							title='RE-RANKED RESULTS'
-							reranked={true}
-						/>
+					<div style={{ marginTop: '20px' }}>
+						<button
+							onClick={handleGenerate}
+							className='btn'
+							disabled={generating}
+							style={{ backgroundColor: '#4CAF50' }}
+						>
+							{generating
+								? 'GENERATING...'
+								: 'GENERATE POST WITH GEMINI'}
+						</button>
 					</div>
-				)}
-			</div>
+				</>
+			)}
+
+			{generatedPost && (
+				<div
+					style={{
+						border: '2px solid #4CAF50',
+						padding: '20px',
+						margin: '20px 0',
+						backgroundColor: '#f0fff0',
+					}}
+				>
+					<h3 style={{ color: '#2e7d32', marginBottom: '15px' }}>
+						GENERATED POST
+					</h3>
+					<p style={{ whiteSpace: 'pre-wrap', lineHeight: '1.6' }}>
+						{generatedPost}
+					</p>
+				</div>
+			)}
 
 			<div className='separator'></div>
 
 			<h3>How it works:</h3>
 			<p style={{ fontSize: '0.9em', color: '#666', lineHeight: '1.5' }}>
-				<strong>Basic Search:</strong> Creates embedding for your query,
-				searches Pinecone for similar vectors, returns top 5 by cosine
-				similarity.
+				1. Search creates an embedding and finds similar posts via
+				cosine similarity.
 				<br />
+				2. Generate uses those posts as context for Gemini to write a
+				new post in the same style.
 			</p>
 		</div>
 	);

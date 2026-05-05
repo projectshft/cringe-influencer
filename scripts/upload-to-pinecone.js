@@ -1,65 +1,16 @@
 import { upsertVectors } from '../libs/pinecone.js';
-import { Pinecone } from '@pinecone-database/pinecone';
 import fs from 'fs';
 import path from 'path';
 import dotenv from 'dotenv';
 
 dotenv.config();
 
-const pc = new Pinecone({
-	apiKey: process.env.PINECONE_API_KEY,
-});
-
-async function createIndexIfNeeded(indexName, dimension) {
-	try {
-		const indexList = await pc.listIndexes();
-		const existingIndex = indexList.indexes?.find(
-			(idx) => idx.name === indexName
-		);
-
-		if (existingIndex) {
-			console.log(`Index '${indexName}' already exists`);
-			if (existingIndex.dimension !== dimension) {
-				console.warn(
-					`⚠️  Index dimension mismatch: expected ${dimension}, got ${existingIndex.dimension}`
-				);
-				console.log(
-					`You may need to delete the existing index or use a different name`
-				);
-				return false;
-			}
-			return true;
-		}
-
-		console.log(
-			`Creating index '${indexName}' with dimension ${dimension}...`
-		);
-		await pc.createIndex({
-			name: indexName,
-			dimension: dimension,
-			metric: 'cosine',
-			spec: {
-				serverless: {
-					cloud: 'aws',
-					region: 'us-east-1',
-				},
-			},
-		});
-
-		console.log(`✅ Index '${indexName}' created successfully`);
-		return true;
-	} catch (error) {
-		console.error('Error managing index:', error);
-		return false;
-	}
-}
-
 async function uploadVectorsToPinecone() {
 	try {
 		const vectorsPath = path.join(
 			process.cwd(),
 			'output',
-			'brian_posts_vectors.json'
+			'brian_posts_vectors.json',
 		);
 
 		if (!fs.existsSync(vectorsPath)) {
@@ -76,15 +27,10 @@ async function uploadVectorsToPinecone() {
 
 		const dimension = vectors[0].values.length;
 		console.log(
-			`Found ${vectors.length} vectors with dimension ${dimension}`
+			`Found ${vectors.length} vectors with dimension ${dimension}`,
 		);
 
 		const indexName = process.env.PINECONE_INDEX_NAME;
-		const indexReady = await createIndexIfNeeded(indexName, dimension);
-
-		if (!indexReady) {
-			throw new Error('Index is not ready for upload');
-		}
 
 		console.log(`Uploading to Pinecone index: ${indexName}`);
 
@@ -92,7 +38,7 @@ async function uploadVectorsToPinecone() {
 
 		console.log('✅ Successfully uploaded all vectors to Pinecone!');
 		console.log(
-			`📊 Uploaded ${vectors.length} vectors to index '${indexName}'`
+			`📊 Uploaded ${vectors.length} vectors to index '${indexName}'`,
 		);
 	} catch (error) {
 		console.error('❌ Error uploading vectors:', error);

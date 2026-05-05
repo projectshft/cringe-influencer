@@ -1,11 +1,8 @@
 'use server';
 
 import { createEmbedding } from '../libs/openai';
-import {
-	queryVectors,
-	rerank,
-	type RerankInputDocument,
-} from '../libs/pinecone';
+import { queryVectors } from '../libs/pinecone';
+import { generateText } from '../libs/gemini';
 
 export interface Document {
 	id: string;
@@ -22,28 +19,26 @@ export interface Document {
 	createdAt?: string;
 	link?: string;
 	hashtags?: string;
-	rerankScore?: number;
 }
 
 export interface SearchResult {
 	query: string;
 	documents: Document[];
 	total: number;
-	reranked?: boolean;
 }
 
 export async function basicSearch(
 	query: string,
-	topK: number = 5
+	topK: number = 5,
 ): Promise<SearchResult> {
 	try {
-		const queryEmbedding = await createEmbedding(query, 512);
+		const queryEmbedding = await createEmbedding(query, 1536);
 
 		const results = await queryVectors(
-			'brian-clone',
+			process.env.PINECONE_INDEX_NAME || 'linkedin-posts',
 			queryEmbedding,
 			topK,
-			true
+			true,
 		);
 
 		const documents: Document[] = results.map((match: any) => ({
@@ -70,70 +65,23 @@ export async function basicSearch(
 		};
 	} catch (error) {
 		console.error('Search error:', error);
-		throw new Error('Search failed');
+		throw error;
 	}
 }
 
-export async function searchWithRerank(
+export async function generatePost(
 	query: string,
-	topK: number = 10
-): Promise<SearchResult> {
-	try {
-		if (!query) {
-			throw new Error('Query is required');
-		}
+	context: string[],
+): Promise<string> {
+	const contextText = context.join('\n\n---\n\n');
+	const prompt = `You are writing a LinkedIn post in the style of the examples below.
 
-		const queryEmbedding = await createEmbedding(query, 512);
+Topic: ${query}
 
-		const results = await queryVectors(
-			'brian-clone',
-			queryEmbedding,
-			topK,
-			true
-		);
+Example posts for style reference:
+${contextText}
 
-		const documents: Document[] = results.map((match: any) => ({
-			id: match.id,
-			score: match.score,
-			text: match.metadata?.text || 'No text available',
-			type: match.metadata?.type,
-			firstName: match.metadata?.firstName,
-			lastName: match.metadata?.lastName,
-			numImpressions: match.metadata?.numImpressions,
-			numViews: match.metadata?.numViews,
-			numReactions: match.metadata?.numReactions,
-			numComments: match.metadata?.numComments,
-			numShares: match.metadata?.numShares,
-			createdAt: match.metadata?.createdAt,
-			link: match.metadata?.link,
-			hashtags: match.metadata?.hashtags,
-		}));
+Write a new LinkedIn post about the topic above, matching the voice and style of the examples. Keep it authentic and conversational.`;
 
-		const rerankDocuments: RerankInputDocument[] = documents.map((doc) => ({
-			id: doc.id,
-			text: doc.text,
-		}));
-
-		const rerankedResults = await rerank(query, rerankDocuments, 5);
-
-		const rerankedDocuments: Document[] = rerankedResults.data.map(
-			(result: any) => {
-				const originalDoc = documents[result.index];
-				return {
-					...originalDoc,
-					rerankScore: result.score,
-				};
-			}
-		);
-
-		return {
-			query,
-			documents: rerankedDocuments,
-			total: rerankedDocuments.length,
-			reranked: true,
-		};
-	} catch (error) {
-		console.error('Search with reranking error:', error);
-		throw new Error('Search with reranking failed');
-	}
+	return generateText(prompt);
 }

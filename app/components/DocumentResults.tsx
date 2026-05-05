@@ -18,13 +18,11 @@ interface Document {
 interface DocumentResultsProps {
 	documents: Document[];
 	title: string;
-	reranked?: boolean;
 }
 
 export default function DocumentResults({
 	documents,
 	title,
-	reranked = false,
 }: DocumentResultsProps) {
 	return (
 		<div
@@ -35,14 +33,7 @@ export default function DocumentResults({
 				backgroundColor: '#f9f9f9',
 			}}
 		>
-			<h3 style={{ color: '#333', marginBottom: '15px' }}>
-				{title}{' '}
-				{reranked && (
-					<span style={{ color: '#e67e22', fontSize: '0.8em' }}>
-						(WITH RERANKING)
-					</span>
-				)}
-			</h3>
+			<h3 style={{ color: '#333', marginBottom: '15px' }}>{title}</h3>
 
 			{documents.length === 0 ? (
 				<p style={{ color: '#666' }}>No results found</p>

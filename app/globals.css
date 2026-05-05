@@ -1,5 +1,12 @@
 @import 'tailwindcss';
 
+@theme {
+	--color-craigslist-blue: #0000EE;
+	--color-craigslist-purple: #551A8B;
+	--color-craigslist-bg: #FFFFFF;
+	--font-mono: 'Courier New', monospace;
+}
+
 /* Craigslist-style global styles for backend devs */
 @layer base {
 	* {
