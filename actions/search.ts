@@ -1,3 +1,8 @@
+/**
+ * Search actions for RAG-powered content retrieval
+ * Learn to build AI apps like this: https://parsity.io/ai-dev
+ * Connect with me: https://linkedin.com/in/brianjenney
+ */
 'use server';
 
 import { createEmbedding } from '../libs/openai';
@@ -25,11 +30,12 @@ export interface SearchResult {
 	query: string;
 	documents: Document[];
 	total: number;
+	shouldAnswer: boolean;
 }
 
 export async function basicSearch(
 	query: string,
-	topK: number = 5,
+	topK: number = 500,
 ): Promise<SearchResult> {
 	try {
 		const queryEmbedding = await createEmbedding(query, 1536);
@@ -62,6 +68,7 @@ export async function basicSearch(
 			query,
 			documents,
 			total: documents.length,
+			shouldAnswer: documents.some((doc) => doc.score >= 0.4),
 		};
 	} catch (error) {
 		console.error('Search error:', error);
@@ -72,16 +79,27 @@ export async function basicSearch(
 export async function generatePost(
 	query: string,
 	context: string[],
+	shouldAnswer: boolean,
 ): Promise<string> {
-	const contextText = context.join('\n\n---\n\n');
-	const prompt = `You are writing a LinkedIn post in the style of the examples below.
+	if (!shouldAnswer) {
+		return 'Do not toy with me bucko';
+	}
+	const contextText = context.join('\n\n---\n\n'); // the stuff from pinecone
+	const prompt = `
+	You are writing a LinkedIn post in the style of the examples below.
 
-Topic: ${query}
+	Topic: ${query}
 
-Example posts for style reference:
-${contextText}
+	Example posts for style reference:
+	${contextText}
 
-Write a new LinkedIn post about the topic above, matching the voice and style of the examples. Keep it authentic and conversational.`;
+	Write a new LinkedIn post about the topic above, 
+	matching the voice and style of the examples. Keep it authentic and conversational.
+	Use the original author experiences and odd phrasing when possible
+	
+	You ONLY generate linkedin posts. If a user asks something non-sensical or irrelevant
+	Politely encourage them to ask to create a post about coding stuff
+	`;
 
 	return generateText(prompt);
 }

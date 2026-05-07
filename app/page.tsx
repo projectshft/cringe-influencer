@@ -1,3 +1,8 @@
+/**
+ * Cringe Influencer RAG - Main page component
+ * Learn to build AI apps like this: https://parsity.io/ai-dev
+ * Connect with me: https://linkedin.com/in/brianjenney
+ */
 'use client';
 
 import { useState } from 'react';

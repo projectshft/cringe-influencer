@@ -1,3 +1,8 @@
+/**
+ * Pinecone vector database utilities for semantic search
+ * Learn to build AI apps like this: https://parsity.io/ai-dev
+ * Connect with me: https://linkedin.com/in/brianjenney
+ */
 import {
 	Pinecone,
 	RecordMetadata,
@@ -39,12 +44,16 @@ export async function upsertVectors(
 			while (retries > 0) {
 				try {
 					await index.upsert({ records: batch as unknown as any });
-					console.log(`Upserted batch ${i + 1}/${batches.length} (${batch.length} vectors)`);
+					console.log(
+						`Upserted batch ${i + 1}/${batches.length} (${batch.length} vectors)`,
+					);
 					break;
 				} catch (err) {
 					retries--;
 					if (retries === 0) throw err;
-					console.log(`Retry batch ${i + 1} (${retries} attempts left)...`);
+					console.log(
+						`Retry batch ${i + 1} (${retries} attempts left)...`,
+					);
 					await new Promise((r) => setTimeout(r, 1000));
 				}
 			}
@@ -69,7 +78,7 @@ export async function queryVectors(
 		const index = pc.index(indexName);
 
 		const queryResponse = await index.query({
-			vector,
+			vector, //this our query represented as a vector 1536
 			topK,
 			includeMetadata,
 		});
@@ -80,4 +89,3 @@ export async function queryVectors(
 		throw error;
 	}
 }
-

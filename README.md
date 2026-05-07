@@ -2,16 +2,14 @@
 
 A Next.js application that uses RAG (Retrieval Augmented Generation) to search through LinkedIn posts, create embeddings, and generate content in an authentic voice.
 
-[Live Walkthrough Video](https://share.descript.com/view/JNWta1T8TKX)
-
 ## 🚀 Quick Start
 
 ### Prerequisites
 
 -   Node.js (v22+)
 -   Yarn package manager
--   OpenAI API key
 -   Pinecone account (free tier available)
+- 
 
 ### Step 1: Clone and Install
 
@@ -103,4 +101,12 @@ For those interested in the technology behind this application:
 -   [Neural Networks](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi) - How neural networks work
 -   [Transformers, explained](https://www.youtube.com/watch?v=SZorAJ4I-sA) - Understanding the transformer architecture
 
-## Join [Parsity.io/ai-dev](https://parsity.io/ai-dev) if you want to learn the skills to create production-grade full stack AI applications.
+---
+
+## Want to Build AI Apps Like This?
+
+Join [Parsity.io/ai-dev](https://parsity.io/ai-dev) to learn the skills to create production-grade full stack AI applications.
+
+### Connect with Me
+
+-   LinkedIn: [linkedin.com/in/brianjenney](https://linkedin.com/in/brianjenney)
