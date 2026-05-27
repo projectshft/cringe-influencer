@@ -2,6 +2,8 @@
 
 A Next.js application that uses RAG (Retrieval Augmented Generation) to search through LinkedIn posts, create embeddings, and generate content in an authentic voice.
 
+**Follow along with the video walkthrough:** [Watch on Descript](https://share.descript.com/view/10iknqMnKYy)
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -9,7 +11,6 @@ A Next.js application that uses RAG (Retrieval Augmented Generation) to search t
 -   Node.js (v22+)
 -   Yarn package manager
 -   Pinecone account (free tier available)
-- 
 
 ### Step 1: Clone and Install
 
